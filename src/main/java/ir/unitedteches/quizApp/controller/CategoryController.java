@@ -1,9 +1,7 @@
 package ir.unitedteches.quizApp.controller;
 
-import ir.unitedteches.quizApp.dto.AnswerDto;
 import ir.unitedteches.quizApp.dto.CategoryDto;
 import ir.unitedteches.quizApp.dto.PackageDto;
-import ir.unitedteches.quizApp.dto.QuestionDto;
 import ir.unitedteches.quizApp.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
