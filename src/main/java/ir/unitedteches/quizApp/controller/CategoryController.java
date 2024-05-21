@@ -3,12 +3,16 @@ package ir.unitedteches.quizApp.controller;
 import ir.unitedteches.quizApp.dto.CategoryDto;
 import ir.unitedteches.quizApp.dto.PackageDto;
 import ir.unitedteches.quizApp.service.CategoryService;
+import ir.unitedteches.quizApp.service.ImageUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
+import java.util.zip.DataFormatException;
 
 @RestController
 public class CategoryController {
@@ -20,7 +24,7 @@ public class CategoryController {
     }
 
     @PostMapping("/categories")
-    public UUID createCategory(@RequestBody CategoryDto categoryDto) {
+    public UUID createCategory(@ModelAttribute CategoryDto categoryDto) throws IOException {
         return categoryService.create(categoryDto);
     }
 
@@ -29,20 +33,21 @@ public class CategoryController {
         var categoryList = categoryService.findAll();
         var categoryDtoList = new LinkedList<CategoryDto>();
         categoryList.forEach(category -> {
-            var categoryDto = new CategoryDto();
-            categoryDto.setTitle(category.getTitle());
-            categoryDto.setExternalId(category.getExternalId());
             var packageDtoList = new LinkedList<PackageDto>();
             if (category.getPackageList() != null) {
                 category.getPackageList().forEach(pack -> {
-                    var packageDto = new PackageDto();
-                    packageDto.setExternalId(pack.getExternalId());
-                    packageDto.setNumberOfQuestions(pack.getNumberOfQuestions());
-                    packageDtoList.add(packageDto);
+                    packageDtoList.add(PackageDto.builder().externalId(pack.getExternalId())
+                            .numberOfQuestions(pack.getNumberOfQuestions()).build());
                 });
             }
-            categoryDto.setPackageList(packageDtoList);
-            categoryDtoList.add(categoryDto);
+            try {
+                categoryDtoList.add(CategoryDto.builder().title(category.getTitle())
+                        .externalId(category.getExternalId())
+                        .packageList(packageDtoList)
+                        .imageByte(ImageUtility.decompressImage(category.getImage().getImageByte())).build()); //TODO
+            } catch (IOException | DataFormatException e) {
+                throw new RuntimeException(e);
+            }
         });
         return categoryDtoList;
     }

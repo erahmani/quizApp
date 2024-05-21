@@ -21,11 +21,9 @@ public class QuestionService {
         this.questionRepository = questionRepository;
     }
 
-    public UUID create(Package package_, QuestionDto questionDto) {
-        var question = new Question();
-        question.setTitle(questionDto.getTitle());
-        question.setPack(package_);
-        var savedQuestion = questionRepository.save(question);
+    public UUID create(Package pack, QuestionDto questionDto) {
+        var savedQuestion = questionRepository.save(Question.builder().title(questionDto.getTitle())
+                .pack(pack).build());
         return savedQuestion.getExternalId();
     }
 

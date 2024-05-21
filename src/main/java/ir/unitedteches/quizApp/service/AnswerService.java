@@ -17,10 +17,8 @@ public class AnswerService {
     }
 
     public UUID create(Question question, AnswerDto answerDto) {
-        var answer = new Answer();
-        answer.setContent(answerDto.getContent());
-        answer.setQuestion(question);
-        var savedAnswer = answerRepository.save(answer); //TODO check for answer id;
+        var savedAnswer = answerRepository.save(Answer.builder().content(answerDto.getContent())
+                .question(question).build());
         return savedAnswer.getExternalId();
     }
 }

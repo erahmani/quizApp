@@ -47,5 +47,4 @@ public class AnswerController {
         var question = questionService.findByExternalId(questionExternalId);
         return answerService.create(question, answerDto);
     }
-
 }

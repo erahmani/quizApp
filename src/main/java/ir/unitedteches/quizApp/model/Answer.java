@@ -2,17 +2,20 @@ package ir.unitedteches.quizApp.model;
 
 import ir.unitedteches.quizApp.service.QuestionService;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.util.UUID;
 
 @Entity
 @Data
+@Builder
+@AllArgsConstructor(access = AccessLevel.PACKAGE)
+@NoArgsConstructor(access = AccessLevel.PACKAGE)
 public class Answer {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column
     private long id;
 
     @Column

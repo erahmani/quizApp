@@ -42,7 +42,7 @@ public class QuestionController {
 
     @GetMapping("/categories/{category}/packages/{package}/questions")
     public List<QuestionDto> getQuestionList(@PathVariable("category") String categoryTitle,
-                                          @PathVariable("package") UUID packageExternalId) {
+                                             @PathVariable("package") UUID packageExternalId) {
         if (!categoryService.existsByTitle(categoryTitle)) {
             throw new RuntimeException("Invalid category");
         }
@@ -53,18 +53,16 @@ public class QuestionController {
         var questionList = questionService.findQuestionsByPackage(pack);
         var questionDtoList = new LinkedList<QuestionDto>();
         questionList.forEach(question -> {
-            var questionDto = new QuestionDto();
-            questionDto.setTitle(question.getTitle());
-            questionDto.setExternalId(question.getExternalId());
             var answersDtoList = new LinkedList<AnswerDto>();
-            question.getAnswersList().forEach(answer -> {
-                var answerDto = new AnswerDto();
-                answerDto.setExternalId(answer.getExternalId());
-                answerDto.setContent(answer.getContent());
-                answersDtoList.add(answerDto);
-            });
-            questionDto.setAnswers(answersDtoList);
-            questionDtoList.add(questionDto);
+            if (question.getAnswersList() != null) {
+                question.getAnswersList().forEach(answer -> {
+                    answersDtoList.add(AnswerDto.builder().externalId(answer.getExternalId())
+                            .content(answer.getContent()).build());
+                });
+            }
+            questionDtoList.add(QuestionDto.builder().title(question.getTitle())
+                    .externalId(question.getExternalId())
+                    .answers(answersDtoList).build());
         });
         return questionDtoList;
     }

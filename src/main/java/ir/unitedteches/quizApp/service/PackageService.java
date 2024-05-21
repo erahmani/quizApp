@@ -1,7 +1,6 @@
 package ir.unitedteches.quizApp.service;
 
 import ir.unitedteches.quizApp.model.Category;
-import ir.unitedteches.quizApp.model.Question;
 import ir.unitedteches.quizApp.repository.PackageRepository;
 import ir.unitedteches.quizApp.model.Package;
 import org.springframework.stereotype.Service;
@@ -17,10 +16,8 @@ public class PackageService {
     }
 
     public UUID create(Category category) {
-        var package_ = new Package();
-        package_.setCategory(category);
-        package_.setNumberOfQuestions(0);
-        var savedQuestion = packageRepository.save(package_);
+        var savedQuestion = packageRepository.save(Package.builder().category(category)
+                .numberOfQuestions(0).build());
         return savedQuestion.getExternalId();
     }
 
